@@ -1,3 +1,5 @@
+from typing import AsyncGenerator
+
 from sqlalchemy import (
     Column,
     CursorResult,
@@ -59,6 +61,6 @@ SessionLocal = sessionmaker(
 )
 
 
-async def get_db():
+async def get_db() -> AsyncGenerator[SessionLocal, None]:
     async with SessionLocal() as session:
         yield session

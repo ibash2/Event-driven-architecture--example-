@@ -23,9 +23,6 @@ async def startup_event():
     await broker.connect()
     await broker.declare_queue("order_created")
 
-    # async with engine.begin() as conn:
-    #     await conn.run_sync(Base.metadata.create_all)
-
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -42,8 +39,10 @@ app.include_router(
 
 
 # import asyncio
+# import signal
 # from app.tasks.consumer import consume
 # from app.tasks.worker import some_background_task
+# from app.core.logger import logger
 
 
 # async def main():
@@ -53,5 +52,20 @@ app.include_router(
 #     await asyncio.gather(consume_task, worker_task)
 
 
+# def shutdown(loop, signal=None):
+#     logger.info(f"Received exit signal {signal.name}...")
+#     tasks = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
+#     [task.cancel() for task in tasks]
+#     loop.stop()
+
+
 # if __name__ == "__main__":
-#     asyncio.run(main())
+#     loop = asyncio.get_event_loop()
+
+#     for sig in (signal.SIGINT, signal.SIGTERM):
+#         loop.add_signal_handler(sig, shutdown, loop, sig)
+
+#     try:
+#         asyncio.run(main())
+#     except (SystemExit, KeyboardInterrupt):
+#         logger.info("Service is shutting down...")

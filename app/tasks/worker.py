@@ -1,9 +1,11 @@
 import asyncio
 
+from app.core.logger import daemon_logger
+
 
 async def some_background_task():
     while True:
-        print("Performing background task...")
+        daemon_logger.info("Performing background task...")
         await asyncio.sleep(5)  # Задержка для имитации выполнения задачи
 
 

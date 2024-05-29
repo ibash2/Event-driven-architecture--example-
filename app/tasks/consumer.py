@@ -1,30 +1,27 @@
-from app.services.rabbitmq_service import RabbitMQBroker
-
-# from app.services.kafka_service import KafkaBroker
-from app.core.config import settings
-from app.database import get_db, Order
-
 import asyncio
-import json
+
+from app.services.rabbitmq_service import RabbitMQBroker
+# from app.services.kafka_service import KafkaBroker
+
+from app.core.config import settings
+from app.utils.event_decorator import get_handler
+from app.core.logger import consumer_logger
 
 
-async def message_callback(message):
-    async with get_db() as db:
-        order_data = json.loads(message.body)
-        order = Order(
-            id=order_data["id"],
-            item=order_data["item"],
-            quantity=order_data["quantity"],
-        )
-        db.add(order)
-        await db.commit()
-    await message.ack()
+async def handle_message(message):
+    event_type = message.headers.get("event_type")
+    handler = get_handler(event_type)
+    if handler:
+        await handler(message)
+    else:
+        consumer_logger.warning(f"No handler for event type: {event_type}")
+        await message.ack()
 
 
 async def consume():
     rabbitmq = RabbitMQBroker(settings.RABBITMQ_URL)
     await rabbitmq.connect()
-    await rabbitmq.consume("order_created", message_callback)
+    await rabbitmq.consume("order_events", handle_message)
 
 
 if __name__ == "__main__":

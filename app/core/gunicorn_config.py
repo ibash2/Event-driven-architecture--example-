@@ -1,28 +1,13 @@
 # based on https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker
 
 import multiprocessing
-
-# import asyncio
 import os
-
-# from src.bot.services.checker.checker import start_socket_checker
-# from src.bot.services.helper import helper
-# from src.bot.service import set_all_used_wallets_to_redis as bot_set_all_used_wallets_to_redis
-# from src.bot.websockets.prise_socket import price_listener
-# from src import redis
-
 
 host = os.getenv("HOST", "0.0.0.0")
 port = os.getenv("PORT", "8000")
 bind_env = os.getenv("BIND", None)
 
 use_bind = bind_env if bind_env else f"{host}:{port}"
-
-# def on_star(server):
-#     asyncio.gather(redis.redis_client.flushall(),bot_set_all_used_wallets_to_redis(),helper.create(),asyncio.create_task(start_socket_checker()))
-#     price_listener.start() #Запускаем сокет отслеживания цены
-#     # asyncio.create_task(start_socket_checker())#Запускаем Chesker
-
 
 workers_per_core_str = os.getenv("WORKERS_PER_CORE", "1")
 max_workers_str = os.getenv("MAX_WORKERS")
@@ -47,10 +32,9 @@ keepalive_str = os.getenv("KEEP_ALIVE", "5")
 use_loglevel = os.getenv("LOG_LEVEL", "info")
 
 # Gunicorn config variables
-# on_starting = on_star
 loglevel = use_loglevel
-# workers = web_concurrency
-workers = 1
+workers = web_concurrency
+# workers = 1
 bind = use_bind
 worker_tmp_dir = "/dev/shm"
 graceful_timeout = int(graceful_timeout_str)

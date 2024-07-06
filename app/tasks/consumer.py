@@ -4,11 +4,13 @@ from app.services.rabbitmq_service import RabbitMQBroker
 # from app.services.kafka_service import KafkaBroker
 
 from app.core.config import settings
-from app.utils.event_decorator import get_handler
+from app.handlers.order_handlers import *  # noqa: F403
+from app.utils.event_decorator import get_handler, event_handlers
 from app.core.logger import consumer_logger
 
 
 async def handle_message(message):
+    consumer_logger.warning(f"Received message: {event_handlers}")
     event_type = message.headers.get("event_type")
     handler = get_handler(event_type)
     if handler:

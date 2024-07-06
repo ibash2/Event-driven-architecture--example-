@@ -23,9 +23,15 @@ class RabbitMQBroker(MessageBroker):
     async def declare_queue(self, queue_name: str):
         await self.channel.declare_queue(queue_name, durable=True)
 
-    async def publish(self, queue_name: str, message: dict):
+    async def publish(self, queue_name: str, message: dict, headers: dict = None):
+        if not headers:
+            headers = {}
         await self.channel.default_exchange.publish(
-            Message(body=json.dumps(message).encode()), routing_key=queue_name
+            Message(
+                body=json.dumps(message).encode(),
+                headers=headers,
+            ),
+            routing_key=queue_name,
         )
 
     async def consume(self, queue_name: str, callback):

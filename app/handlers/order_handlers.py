@@ -1,12 +1,12 @@
 import json
 from app.utils.event_decorator import event_handler
-from app.database import get_db, Order
+from app.database import get_db, Order, SessionLocal
 from app.core.logger import order_logger
 
 
 @event_handler("order_created")
 async def handle_order_created(message):
-    async with get_db() as db:
+    async with SessionLocal() as db:
         order_data = json.loads(message.body)
         order = Order(
             id=order_data["id"],

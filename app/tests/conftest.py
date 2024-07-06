@@ -5,7 +5,7 @@ from typing import Generator, AsyncGenerator
 
 from async_asgi_testclient import TestClient
 
-from app.main import app
+from main import app
 
 
 # DATABASE_URL = str(settings.DATABASE_URL)
